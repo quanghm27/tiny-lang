@@ -1,0 +1,4 @@
+form = (x y z) => {
+    print("x =" x)
+}
+print("The distance is", form(1, 2, 3))
