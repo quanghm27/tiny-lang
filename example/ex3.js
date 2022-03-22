@@ -1,7 +1,13 @@
-var form = function (x, y, z) {
-    return add(x, y, z)
-};
-print("The distance is", form(1, 2, 3))
+function a () {
+    let b = 15 + 1 * (2 * (99 + 5));
+    return add(b, 7);
+}
+print("result = ", a())
+
+/*
+* Generated built-in functions
+*/
+
 function print(...args) {
     console.log(...args);
 }
@@ -10,16 +16,16 @@ function add(...args) {
     return args.reduce((total, current) => total += current, 0);
 }
 
-function multiply(x, y) {
-    return x * y;
+function multiply(...args) {
+    return args.reduce((total, current) => total *= current, 1);
 }
 
-function subtract(x, y) {
-    return x - y;
+function subtract(...args) {
+    return args.reduce((total, current) => total -= current, 0);
 }
 
-function divide(x, y) {
-    return x / y;
+function divide(...args) {
+    return args.reduce((total, current) => total /= current, 1);
 }
 
 function sqrt(x) {

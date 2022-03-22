@@ -1,19 +1,15 @@
 @{%
-const myLexer = require("./lexer");
+const myLexer = require("../lexer");
 %}
 
 @lexer myLexer
 
 program
-    -> _ml statements _ml
-        {%
-            (data) => {
-                return data[1];
-            }
-        %}
+    -> _ml program_statements _ml
+        {% data => data[1] %}
 
-statements
-    ->  statement (__lb_ statement):*
+program_statements
+    ->  program_statement (__lb_ program_statement):*
         {%
             (data) => {
                 const repeated = data[1];
@@ -22,14 +18,64 @@ statements
             }
         %}
 
-statement
-    -> var_assign  {% id %}
-    |  fun_call    {% id %}
-    |  %comment    {% id %}
-    | return_statement {% id %}
+program_statement
+    -> formula_definition  {% id %}
+    | formula_evaluation   {% id %}
+
+formula_definition
+    -> "form" __ %identifier _ "(" _ parameter_list _ ")" _ formula_body
+    {%
+        (data) => {
+            return {
+                type: "formula_definition",
+                name: data[2],
+                parameters: data[6],
+                body: data[10]
+            }
+        }
+    %}
+
+parameter_list
+    -> null        
+        {% () => [] %}
+    | expression   
+        {% d => [d[0]] %}
+    | expression _ "," _ parameter_list
+        {%
+            d => [d[0], ...d[4]]
+        %}
+
+formula_body
+    -> "{" executable_statements "}"
+    {%
+        (data) => {
+            return {
+                type: "code_block",
+                statements: data[1],
+            }
+        }
+    %}
+
+executable_statements
+    -> _
+        {% () => [] %}
+    |  _ "\n" executable_statements
+        {% (d) => d[2] %}
+    |  _ executable_statement _
+        {% d => [d[1]] %}
+    |  _ executable_statement _ "\n" executable_statements
+        {%
+            d => [d[1], ...d[4]]
+        %}
+
+executable_statement
+    -> var_assign            {% id %}
+    # | formula_evaluation     {% id %}
+    |  %comment              {% id %}
+    | return_statement       {% id %}
 
 var_assign
-    -> %identifier _ "=" _ expr
+    -> %identifier _ "=" _ expression
         {%
             (data) => {
                 return {
@@ -40,90 +86,65 @@ var_assign
             }
         %}
 
-fun_call
-    -> %identifier _ "(" _ml (arg_list _ml):? ")"
+expression
+    -> unary_expression      {% id %}
+    |  formula_evaluation    {% id %}
+    |  binary_expression     {% id %}
+
+unary_expression
+    -> %string               {% id %}
+    |  %number               {% id %}
+    |  %identifier           {% id %}
+    |  paren_expression      {% id %}
+
+formula_evaluation
+    -> %identifier _ "(" _ parameter_list _ ")"
         {%
             (data) => {
                 return {
-                    type: "fun_call",
-                    fun_name: data[0],
-                    arguments: data[4] ? data[4][0] : []
+                    type: "formula_evaluation",
+                    name: data[0],
+                    arguments: data[4]
                 }
             }
         %}
-
-arg_list
-    -> expr
-        {%
-            (data) => {
-                return [data[0]];
-            }
-        %}
-    |  arg_list __ml expr
-        {%
-            (data) => {
-                return [...data[0], data[2]];
-            }
-        %}
-
-expr
-    -> %string     {% id %}
-    |  %number     {% id %}
-    |  %identifier {% id %}
-    |  fun_call    {% id %}
-    |  lambda      {% id %}
-
-lambda -> "(" _ (param_list _):? ")" _ "=>" _ml lambda_body
-    {%
-        (data) => {
-            return {
-                type: "lambda",
-                parameters: data[2] ? data[2][0] : [],
-                ...data[7]
-            }
-        }
-    %}
-    
-param_list
-    -> %identifier (__ %identifier):*
-        {%
-            (data) => {
-                const repeatedPieces = data[1];
-                const restParams = repeatedPieces.map(piece => piece[1]);
-                return [data[0], ...restParams];
-            }
-        %}
-
-lambda_body
-    -> expr
-        {%
-            (data) => {
-                return {
-                    body: [data[0]],
-                    inline: true
-                }
-            }
-        %}
-    |  "{" __lb_ function_statements __lb_ "}"
-        {%
-            (data) => {
-                return {
-                    body: data[2],
-                    inline: false
-                }
-            }
-        %}
-
-function_statements
-    -> statements      {% id %}
-    | return_statement {% id %}
 
 return_statement
-    -> "return" _ expr
+    -> "return" __ expression
         {%
             (data) => {
                 return {
                     type: "return_statement",
+                    value: data[2]
+                }
+            }
+        %}
+
+binary_expression
+    ->  unary_expression _ operator _ expression
+        {%
+            (data) => {
+                return {
+                    type: "binary_expression",
+                    operator: data[2],
+                    left: data[0],
+                    right: data[4],
+                }
+            }
+        %}
+
+operator
+    -> "+" {% id %}
+    |  "-" {% id %}
+    |  "*" {% id %}
+    |  "/" {% id %}
+
+paren_expression
+    -> "(" _ binary_expression _ ")"
+        {%
+            (data) => {
+                return {
+                    type: "paren_expression",
                     value: data[2]
                 }
             }

@@ -1,152 +1,201 @@
 [
   {
-    "type": "var_assign",
-    "var_name": {
+    "type": "formula_definition",
+    "name": {
       "type": "identifier",
-      "value": "form",
-      "text": "form",
-      "offset": 0,
+      "value": "a",
+      "text": "a",
+      "offset": 5,
       "lineBreaks": 0,
       "line": 1,
-      "col": 1
+      "col": 6
     },
-    "value": {
-      "type": "lambda",
-      "parameters": [
+    "parameters": [],
+    "body": {
+      "type": "code_block",
+      "statements": [
         {
-          "type": "identifier",
-          "value": "x",
-          "text": "x",
-          "offset": 8,
-          "lineBreaks": 0,
-          "line": 1,
-          "col": 9
-        },
-        {
-          "type": "identifier",
-          "value": "y",
-          "text": "y",
-          "offset": 10,
-          "lineBreaks": 0,
-          "line": 1,
-          "col": 11
-        },
-        {
-          "type": "identifier",
-          "value": "z",
-          "text": "z",
-          "offset": 12,
-          "lineBreaks": 0,
-          "line": 1,
-          "col": 13
-        }
-      ],
-      "body": [
-        {
-          "type": "fun_call",
-          "fun_name": {
+          "type": "var_assign",
+          "var_name": {
             "type": "identifier",
-            "value": "add",
-            "text": "add",
-            "offset": 18,
+            "value": "b",
+            "text": "b",
+            "offset": 15,
             "lineBreaks": 0,
-            "line": 1,
-            "col": 19
+            "line": 2,
+            "col": 5
           },
-          "arguments": [
-            {
-              "type": "identifier",
-              "value": "x",
-              "text": "x",
+          "value": {
+            "type": "binary_expression",
+            "operator": {
+              "type": "plus",
+              "value": "+",
+              "text": "+",
               "offset": 22,
               "lineBreaks": 0,
-              "line": 1,
-              "col": 23
+              "line": 2,
+              "col": 12
             },
-            {
-              "type": "identifier",
-              "value": "y",
-              "text": "y",
-              "offset": 25,
+            "left": {
+              "type": "number",
+              "value": "15",
+              "text": "15",
+              "offset": 19,
               "lineBreaks": 0,
-              "line": 1,
-              "col": 26
+              "line": 2,
+              "col": 9
             },
-            {
-              "type": "identifier",
-              "value": "z",
-              "text": "z",
-              "offset": 28,
-              "lineBreaks": 0,
-              "line": 1,
-              "col": 29
+            "right": {
+              "type": "binary_expression",
+              "operator": {
+                "type": "multiply",
+                "value": "*",
+                "text": "*",
+                "offset": 26,
+                "lineBreaks": 0,
+                "line": 2,
+                "col": 16
+              },
+              "left": {
+                "type": "number",
+                "value": "1",
+                "text": "1",
+                "offset": 24,
+                "lineBreaks": 0,
+                "line": 2,
+                "col": 14
+              },
+              "right": {
+                "type": "paren_expression",
+                "value": {
+                  "type": "binary_expression",
+                  "operator": {
+                    "type": "multiply",
+                    "value": "*",
+                    "text": "*",
+                    "offset": 31,
+                    "lineBreaks": 0,
+                    "line": 2,
+                    "col": 21
+                  },
+                  "left": {
+                    "type": "number",
+                    "value": "2",
+                    "text": "2",
+                    "offset": 29,
+                    "lineBreaks": 0,
+                    "line": 2,
+                    "col": 19
+                  },
+                  "right": {
+                    "type": "paren_expression",
+                    "value": {
+                      "type": "binary_expression",
+                      "operator": {
+                        "type": "plus",
+                        "value": "+",
+                        "text": "+",
+                        "offset": 37,
+                        "lineBreaks": 0,
+                        "line": 2,
+                        "col": 27
+                      },
+                      "left": {
+                        "type": "number",
+                        "value": "99",
+                        "text": "99",
+                        "offset": 34,
+                        "lineBreaks": 0,
+                        "line": 2,
+                        "col": 24
+                      },
+                      "right": {
+                        "type": "number",
+                        "value": "5",
+                        "text": "5",
+                        "offset": 39,
+                        "lineBreaks": 0,
+                        "line": 2,
+                        "col": 29
+                      }
+                    }
+                  }
+                }
+              }
             }
-          ]
+          }
+        },
+        {
+          "type": "return_statement",
+          "value": {
+            "type": "formula_evaluation",
+            "name": {
+              "type": "identifier",
+              "value": "add",
+              "text": "add",
+              "offset": 54,
+              "lineBreaks": 0,
+              "line": 3,
+              "col": 12
+            },
+            "arguments": [
+              {
+                "type": "identifier",
+                "value": "b",
+                "text": "b",
+                "offset": 58,
+                "lineBreaks": 0,
+                "line": 3,
+                "col": 16
+              },
+              {
+                "type": "number",
+                "value": "7",
+                "text": "7",
+                "offset": 61,
+                "lineBreaks": 0,
+                "line": 3,
+                "col": 19
+              }
+            ]
+          }
         }
       ]
     }
   },
   {
-    "type": "fun_call",
-    "fun_name": {
+    "type": "formula_evaluation",
+    "name": {
       "type": "identifier",
       "value": "print",
       "text": "print",
-      "offset": 32,
+      "offset": 66,
       "lineBreaks": 0,
-      "line": 2,
+      "line": 5,
       "col": 1
     },
     "arguments": [
       {
         "type": "string",
-        "value": "\"The distance is\"",
-        "text": "\"The distance is\"",
-        "offset": 38,
+        "value": "\"result = \"",
+        "text": "\"result = \"",
+        "offset": 72,
         "lineBreaks": 0,
-        "line": 2,
+        "line": 5,
         "col": 7
       },
       {
-        "type": "fun_call",
-        "fun_name": {
+        "type": "formula_evaluation",
+        "name": {
           "type": "identifier",
-          "value": "form",
-          "text": "form",
-          "offset": 57,
+          "value": "a",
+          "text": "a",
+          "offset": 85,
           "lineBreaks": 0,
-          "line": 2,
-          "col": 26
+          "line": 5,
+          "col": 20
         },
-        "arguments": [
-          {
-            "type": "number",
-            "value": "1",
-            "text": "1",
-            "offset": 62,
-            "lineBreaks": 0,
-            "line": 2,
-            "col": 31
-          },
-          {
-            "type": "number",
-            "value": "2",
-            "text": "2",
-            "offset": 65,
-            "lineBreaks": 0,
-            "line": 2,
-            "col": 34
-          },
-          {
-            "type": "number",
-            "value": "3",
-            "text": "3",
-            "offset": 68,
-            "lineBreaks": 0,
-            "line": 2,
-            "col": 37
-          }
-        ]
+        "arguments": []
       }
     ]
   }

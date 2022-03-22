@@ -3,30 +3,56 @@
 (function () {
 function id(x) { return x[0]; }
 
-const myLexer = require("./lexer");
+const myLexer = require("../lexer");
 var grammar = {
     Lexer: myLexer,
     ParserRules: [
-    {"name": "program", "symbols": ["_ml", "statements", "_ml"], "postprocess": 
-        (data) => {
-            return data[1];
-        }
-                },
-    {"name": "statements$ebnf$1", "symbols": []},
-    {"name": "statements$ebnf$1$subexpression$1", "symbols": ["__lb_", "statement"]},
-    {"name": "statements$ebnf$1", "symbols": ["statements$ebnf$1", "statements$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "statements", "symbols": ["statement", "statements$ebnf$1"], "postprocess": 
+    {"name": "program", "symbols": ["_ml", "program_statements", "_ml"], "postprocess": data => data[1]},
+    {"name": "program_statements$ebnf$1", "symbols": []},
+    {"name": "program_statements$ebnf$1$subexpression$1", "symbols": ["__lb_", "program_statement"]},
+    {"name": "program_statements$ebnf$1", "symbols": ["program_statements$ebnf$1", "program_statements$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "program_statements", "symbols": ["program_statement", "program_statements$ebnf$1"], "postprocess": 
         (data) => {
             const repeated = data[1];
             const restStatements = repeated.map(chunks => chunks[1]);
             return [data[0], ...restStatements];
         }
                 },
-    {"name": "statement", "symbols": ["var_assign"], "postprocess": id},
-    {"name": "statement", "symbols": ["fun_call"], "postprocess": id},
-    {"name": "statement", "symbols": [(myLexer.has("comment") ? {type: "comment"} : comment)], "postprocess": id},
-    {"name": "statement", "symbols": ["return_statement"], "postprocess": id},
-    {"name": "var_assign", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expr"], "postprocess": 
+    {"name": "program_statement", "symbols": ["formula_definition"], "postprocess": id},
+    {"name": "program_statement", "symbols": ["formula_evaluation"], "postprocess": id},
+    {"name": "formula_definition", "symbols": [{"literal":"form"}, "__", (myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "parameter_list", "_", {"literal":")"}, "_", "formula_body"], "postprocess": 
+        (data) => {
+            return {
+                type: "formula_definition",
+                name: data[2],
+                parameters: data[6],
+                body: data[10]
+            }
+        }
+            },
+    {"name": "parameter_list", "symbols": [], "postprocess": () => []},
+    {"name": "parameter_list", "symbols": ["expression"], "postprocess": d => [d[0]]},
+    {"name": "parameter_list", "symbols": ["expression", "_", {"literal":","}, "_", "parameter_list"], "postprocess": 
+        d => [d[0], ...d[4]]
+                },
+    {"name": "formula_body", "symbols": [{"literal":"{"}, "executable_statements", {"literal":"}"}], "postprocess": 
+        (data) => {
+            return {
+                type: "code_block",
+                statements: data[1],
+            }
+        }
+            },
+    {"name": "executable_statements", "symbols": ["_"], "postprocess": () => []},
+    {"name": "executable_statements", "symbols": ["_", {"literal":"\n"}, "executable_statements"], "postprocess": (d) => d[2]},
+    {"name": "executable_statements", "symbols": ["_", "executable_statement", "_"], "postprocess": d => [d[1]]},
+    {"name": "executable_statements", "symbols": ["_", "executable_statement", "_", {"literal":"\n"}, "executable_statements"], "postprocess": 
+        d => [d[1], ...d[4]]
+                },
+    {"name": "executable_statement", "symbols": ["var_assign"], "postprocess": id},
+    {"name": "executable_statement", "symbols": [(myLexer.has("comment") ? {type: "comment"} : comment)], "postprocess": id},
+    {"name": "executable_statement", "symbols": ["return_statement"], "postprocess": id},
+    {"name": "var_assign", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"="}, "_", "expression"], "postprocess": 
         (data) => {
             return {
                 type: "var_assign",
@@ -35,77 +61,48 @@ var grammar = {
             }
         }
                 },
-    {"name": "fun_call$ebnf$1$subexpression$1", "symbols": ["arg_list", "_ml"]},
-    {"name": "fun_call$ebnf$1", "symbols": ["fun_call$ebnf$1$subexpression$1"], "postprocess": id},
-    {"name": "fun_call$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "fun_call", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_ml", "fun_call$ebnf$1", {"literal":")"}], "postprocess": 
+    {"name": "expression", "symbols": ["unary_expression"], "postprocess": id},
+    {"name": "expression", "symbols": ["formula_evaluation"], "postprocess": id},
+    {"name": "expression", "symbols": ["binary_expression"], "postprocess": id},
+    {"name": "unary_expression", "symbols": [(myLexer.has("string") ? {type: "string"} : string)], "postprocess": id},
+    {"name": "unary_expression", "symbols": [(myLexer.has("number") ? {type: "number"} : number)], "postprocess": id},
+    {"name": "unary_expression", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier)], "postprocess": id},
+    {"name": "unary_expression", "symbols": ["paren_expression"], "postprocess": id},
+    {"name": "formula_evaluation", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "_", {"literal":"("}, "_", "parameter_list", "_", {"literal":")"}], "postprocess": 
         (data) => {
             return {
-                type: "fun_call",
-                fun_name: data[0],
-                arguments: data[4] ? data[4][0] : []
+                type: "formula_evaluation",
+                name: data[0],
+                arguments: data[4]
             }
         }
                 },
-    {"name": "arg_list", "symbols": ["expr"], "postprocess": 
-        (data) => {
-            return [data[0]];
-        }
-                },
-    {"name": "arg_list", "symbols": ["arg_list", "__ml", "expr"], "postprocess": 
-        (data) => {
-            return [...data[0], data[2]];
-        }
-                },
-    {"name": "expr", "symbols": [(myLexer.has("string") ? {type: "string"} : string)], "postprocess": id},
-    {"name": "expr", "symbols": [(myLexer.has("number") ? {type: "number"} : number)], "postprocess": id},
-    {"name": "expr", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier)], "postprocess": id},
-    {"name": "expr", "symbols": ["fun_call"], "postprocess": id},
-    {"name": "expr", "symbols": ["lambda"], "postprocess": id},
-    {"name": "lambda$ebnf$1$subexpression$1", "symbols": ["param_list", "_"]},
-    {"name": "lambda$ebnf$1", "symbols": ["lambda$ebnf$1$subexpression$1"], "postprocess": id},
-    {"name": "lambda$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "lambda", "symbols": [{"literal":"("}, "_", "lambda$ebnf$1", {"literal":")"}, "_", {"literal":"=>"}, "_ml", "lambda_body"], "postprocess": 
-        (data) => {
-            return {
-                type: "lambda",
-                parameters: data[2] ? data[2][0] : [],
-                ...data[7]
-            }
-        }
-            },
-    {"name": "param_list$ebnf$1", "symbols": []},
-    {"name": "param_list$ebnf$1$subexpression$1", "symbols": ["__", (myLexer.has("identifier") ? {type: "identifier"} : identifier)]},
-    {"name": "param_list$ebnf$1", "symbols": ["param_list$ebnf$1", "param_list$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "param_list", "symbols": [(myLexer.has("identifier") ? {type: "identifier"} : identifier), "param_list$ebnf$1"], "postprocess": 
-        (data) => {
-            const repeatedPieces = data[1];
-            const restParams = repeatedPieces.map(piece => piece[1]);
-            return [data[0], ...restParams];
-        }
-                },
-    {"name": "lambda_body", "symbols": ["expr"], "postprocess": 
-        (data) => {
-            return {
-                body: [data[0]],
-                inline: true
-            }
-        }
-                },
-    {"name": "lambda_body", "symbols": [{"literal":"{"}, "__lb_", "function_statements", "__lb_", {"literal":"}"}], "postprocess": 
-        (data) => {
-            return {
-                body: data[2],
-                inline: false
-            }
-        }
-                },
-    {"name": "function_statements", "symbols": ["statements"], "postprocess": id},
-    {"name": "function_statements", "symbols": ["return_statement"], "postprocess": id},
-    {"name": "return_statement", "symbols": [{"literal":"return"}, "_", "expr"], "postprocess": 
+    {"name": "return_statement", "symbols": [{"literal":"return"}, "__", "expression"], "postprocess": 
         (data) => {
             return {
                 type: "return_statement",
+                value: data[2]
+            }
+        }
+                },
+    {"name": "binary_expression", "symbols": ["unary_expression", "_", "operator", "_", "expression"], "postprocess": 
+        (data) => {
+            return {
+                type: "binary_expression",
+                operator: data[2],
+                left: data[0],
+                right: data[4],
+            }
+        }
+                },
+    {"name": "operator", "symbols": [{"literal":"+"}], "postprocess": id},
+    {"name": "operator", "symbols": [{"literal":"-"}], "postprocess": id},
+    {"name": "operator", "symbols": [{"literal":"*"}], "postprocess": id},
+    {"name": "operator", "symbols": [{"literal":"/"}], "postprocess": id},
+    {"name": "paren_expression", "symbols": [{"literal":"("}, "_", "binary_expression", "_", {"literal":")"}], "postprocess": 
+        (data) => {
+            return {
+                type: "paren_expression",
                 value: data[2]
             }
         }

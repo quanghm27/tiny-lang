@@ -13,8 +13,12 @@ let lexer = moo.compile({
     identifier: /[a-zA-Z][a-zA-Z_0-9]*/,
     fatarrow: '=>',
     assign: '=',
-    NL: { match: /\r\n/, lineBreaks: true },
+    NL: { match: /\n/, lineBreaks: true },
     colon: ',',
+    plus: '+',
+    minus: '-',
+    multiply: '*',
+    divide: '/',
 });
 
 module.exports = lexer;

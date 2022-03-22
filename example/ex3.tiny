@@ -1,4 +1,5 @@
-form = (x y z) => {
-    print("x =" x)
+form a() {
+    b = 15 + 1 * (2 * (99 + 5))
+    return add(b, 7)
 }
-print("The distance is", form(1, 2, 3))
+print("result = ", a())
