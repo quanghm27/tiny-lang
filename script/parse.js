@@ -18,7 +18,7 @@ async function main() {
         console.log("Error: ambigous grammar detected");
     } else if (parser.results.length == 1) {
         const ast = parser.results[0];
-        const outputFilename = filename.replace(".tiny", ".ast");
+        const outputFilename = filename.replace(".tiny", ".ast").replace("program", "ast");
         await fs.writeFile(outputFilename, JSON.stringify(ast, null, "  "));
         console.log(`Wrote ${outputFilename}.`);
     } else {

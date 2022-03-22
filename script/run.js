@@ -8,11 +8,15 @@ async function main() {
         console.log("Please provide a .tiny file.");
         return;
     }
+    const programDir = "./example/program/"
+    const astDir = "./example/ast/"
+    const targetCodeDir = "./example/target-code/"
+
     const astFilename = filename.replace(".tiny", ".ast");
     const jsFilename = filename.replace(".tiny", ".js");
-    await myExec(`node ./script/parse.js ${filename}`);
-    await myExec(`node ./script/generate.js ${astFilename}`);
-    await myExec(`node ${jsFilename}`);
+    await myExec(`node ./script/parse.js ${programDir + filename}`);
+    await myExec(`node ./script/generate.js ${astDir + astFilename}`);
+    await myExec(`node ${targetCodeDir + jsFilename}`);
 }
 
 async function myExec(command) {

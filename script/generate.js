@@ -11,7 +11,7 @@ async function main() {
     const statements = JSON.parse(astJson);
     const runtimeJs = (await fs.readFile("./builtin/index.js")).toString();
     const jsCode = generateJsForStatements(statements) + "\n\n" + runtimeJs;
-    const outputFilename = filename.replace(".ast", ".js");
+    const outputFilename = filename.replace(".ast", ".js").replace("ast", "target-code");
     await fs.writeFile(outputFilename, jsCode);
     console.log(`Wrote ${outputFilename}.`);
 }

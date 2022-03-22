@@ -1,12 +1,13 @@
 {
-  "name": "formula",
-  "version": "1.0.0",
+  "name": "tiny-lang",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gen-parser": "nearleyc ./grammar/tiny.ne -o ./grammar/tiny.js"
+    "gen-parser": "nearleyc ./grammar/tiny.ne -o ./grammar/tiny.js",
+    "run-program": "node ./script/run.js %npm_config_file%"
   },
-  "keywords": [],
+  "keywords": ["language"],
   "author": "",
   "license": "ISC",
   "dependencies": {

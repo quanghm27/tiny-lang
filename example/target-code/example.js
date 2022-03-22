@@ -1,8 +1,9 @@
-function a () {
+function myFormula () {
     let b = 15 + 1 * (2 * (99 + 5));
-    return add(b, 7);
+    let c = sqrt(4);
+    return add(b, 7, 6, multiply(2, 3, 4, 5));
 }
-print("result = ", a())
+print("result = ", myFormula())
 
 /*
 * Generated built-in functions

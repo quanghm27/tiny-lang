@@ -1,5 +1,0 @@
-form a() {
-    b = 15 + 1 * (2 * (99 + 5))
-    return add(b, 7)
-}
-print("result = ", a())

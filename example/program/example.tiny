@@ -1,0 +1,6 @@
+form myFormula() {
+    b = 15 + 1 * (2 * (99 + 5))
+    c = sqrt(4)
+    return add(b, 7, 6, multiply(2,3,4,5))
+}
+print("result = ", myFormula())
