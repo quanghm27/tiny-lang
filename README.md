@@ -2,7 +2,13 @@
 
 small demo for using [NearleyJS](https://nearley.js.org/) to create a programming language
 
-## Write a program
+## Feature
+- Variable assignment
+- Define function (formula)
+- Basic math operator ( +, - , *, /)
+- Comment line
+
+## Example a program
 `.tiny` file:
 
 ```
@@ -25,7 +31,7 @@ print("result = ", myFormula()) // -> result =  356
 ```
 print(add(5,6,7, multiply(4,5,6))) // -> 138
 ```
-## run program
+## Run program
 1. write a `.tiny` file, put it to `./example/program/` folder
 2. run script:
 `npm run run-program --file={your-file-name}.tiny`
