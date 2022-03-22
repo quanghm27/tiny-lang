@@ -22,7 +22,9 @@ form myFormula() {
 }
 print("result = ", myFormula()) // -> result =  356
 ```
-
+```
+print(add(5,6,7, multiply(4,5,6))) // -> 138
+```
 ## run program
 1. write a `.tiny` file, put it to `./example/program/` folder
 2. run script:
