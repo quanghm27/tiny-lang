@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "gen-parser": "nearleyc ./grammar/tiny.ne -o ./grammar/tiny.js",
-    "run-program": "node ./script/run.js %npm_config_file%"
+    "run-program": "cross-var node ./script/run.js $npm_config_file"
   },
-  "keywords": ["language"],
+  "keywords": [
+    "language"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cross-var": "^1.1.0",
     "moo": "^0.5.1",
     "mz": "^2.7.0",
     "nearley": "^2.20.1"
